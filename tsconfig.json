@@ -9,15 +9,9 @@
     }
   ],
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"]
+      "@/*": ["./src/*"]
     }
   }
 }

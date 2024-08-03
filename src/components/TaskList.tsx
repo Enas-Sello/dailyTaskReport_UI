@@ -1,14 +1,14 @@
 import React from "react"
-import {  useDeleteTaskMutation } from "../store/api"
+import { useDeleteTaskMutation } from "../store/api"
 import { Task } from "@/types"
 
 const TaskList: React.FC<{ tasks: Task[] }> = ({ tasks }) => {
   console.log("tasks", tasks)
-  
-  const [deleteTask] = useDeleteTaskMutation()
 
-  // if (isLoading) return <div>Loading...</div>
-  // if (error) return <div>Error loading tasks</div>
+  const [deleteTask, { isLoading, isError }] = useDeleteTaskMutation()
+
+  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>Error loading tasks</div>
 
   const handleDelete = async (taskId: string) => {
     await deleteTask(taskId)

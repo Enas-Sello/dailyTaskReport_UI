@@ -1,4 +1,4 @@
-import SignUp from "@/components/SignUp"
+import SignUp from "@/pages/SignUp"
 import Login from "@/pages/Login"
 import Tasks from "@/pages/Tasks"
 import { Route, Routes } from "react-router-dom"
