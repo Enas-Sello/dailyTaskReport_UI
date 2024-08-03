@@ -1,32 +1,20 @@
+import { Employee, Task } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
-export interface Task {
-  id: string
-  description: string
-  from: string
-  to: string
-  employee: string
-}
-
-export interface Employee {
-  id: string
-  name: string
-  tasks: Task[]
-}
 
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }),
   endpoints: (builder) => ({
     createTask: builder.mutation<Task, Partial<Task>>({
-      query: (body) => ({
+      query: (task) => ({
         url: "/tasks",
         method: "POST",
-        body,
+        body: task,
       }),
     }),
 
-    createEmployee: builder.mutation<Employee, "">({
+    createEmployee: builder.mutation<Employee, Partial<Employee>>({
       query: (body) => ({
         url: "/employees",
         method: "POST",
@@ -35,7 +23,11 @@ export const api = createApi({
     }),
 
     getEmployee: builder.query<Employee, string>({
-      query: (id) => `/employees/${id}`,
+      query: (name) => `/employees?name=${name}`,
+    }),
+
+    getTasksByEmployee: builder.query<Task[], string>({
+      query: (employeeId) => `/employees/${employeeId}/tasks`,
     }),
 
     getTask: builder.query<Task, string>({
@@ -60,7 +52,7 @@ export const api = createApi({
       { totalHours: number; remainingHours: number },
       { employeeId: string; date: string }
     >({
-      query: ({ employeeId, date }) => `/daily-summary//${employeeId}/${date}`,
+      query: ({ employeeId, date }) => `/daily-summary/${employeeId}/${date}`,
     }),
   }),
 })
@@ -68,6 +60,7 @@ export const api = createApi({
 export const {
   useCreateEmployeeMutation,
   useGetEmployeeQuery,
+  useGetTasksByEmployeeQuery,
   useCreateTaskMutation,
   useGetTaskQuery,
   useUpdateTaskMutation,

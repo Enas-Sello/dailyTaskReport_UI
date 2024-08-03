@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
+import employeeReducer from "./employeeSlice"
 import { api } from "./api"
 
 export const store = configureStore({
   reducer: {
+    employee: employeeReducer,
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>

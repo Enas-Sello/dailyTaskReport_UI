@@ -1,17 +1,16 @@
-import { useCreateTaskMutation } from "@/store/api"
 import React, { useState } from "react"
+import { useCreateTaskMutation } from "../store/api"
 
-const CreateTask: React.FC = () => {
+const CreateTask: React.FC<{ employeeId: string }> = ({ employeeId }) => {
   const [createTask] = useCreateTaskMutation()
   const [description, setDescription] = useState("")
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
-  const [employee, setEmployee] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await createTask({ description, from, to, employee }).unwrap()
+      await createTask({ description, from, to, employee: employeeId }).unwrap()
       alert("Task created successfully")
     } catch (error) {
       console.error("Failed to create task:", error)
@@ -20,11 +19,14 @@ const CreateTask: React.FC = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 mb-4 bg-white border-2 rounded"
+    >
       <div>
         <label>Description</label>
         <input
-          className="border-2"
+          className="p-2 mb-4 border-2 rounded"
           type="text"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -34,7 +36,7 @@ const CreateTask: React.FC = () => {
       <div>
         <label>From</label>
         <input
-          className="border-2"
+          className="p-2 mb-4 border-2 rounded"
           type="datetime-local"
           value={from}
           onChange={(e) => setFrom(e.target.value)}
@@ -44,24 +46,17 @@ const CreateTask: React.FC = () => {
       <div>
         <label>To</label>
         <input
-          className="border-2"
+          className="p-2 mb-4 border-2 rounded"
           type="datetime-local"
           value={to}
           onChange={(e) => setTo(e.target.value)}
           required
         />
       </div>
-      <div>
-        <label>Employee</label>
-        <input
-          className="border-2"
-          type="text"
-          value={employee}
-          onChange={(e) => setEmployee(e.target.value)}
-          required
-        />
-      </div>
-      <button className="border-2" type="submit">
+      <button
+        className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700"
+        type="submit"
+      >
         Create Task
       </button>
     </form>

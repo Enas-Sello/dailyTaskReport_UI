@@ -1,10 +1,10 @@
 import "./App.css"
-import CreateTask from "./components/CreateTask"
+import Root from "./routes/Index"
 
 function App() {
   return (
     <>
-      <CreateTask />
+      <Root />
     </>
   )
 }
