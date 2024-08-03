@@ -1,37 +1,74 @@
-import React from "react"
+import React, { useState } from "react"
 import { useDeleteTaskMutation } from "../store/api"
-import { Task } from "@/types"
+import { Employee } from "@/types"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Button } from "./ui/button"
+import DateTransform from "@/utils/DateTransform"
 
-const TaskList: React.FC<{ tasks: Task[] }> = ({ tasks }) => {
-  console.log("tasks", tasks)
-
+const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
   const [deleteTask, { isLoading, isError }] = useDeleteTaskMutation()
-
-  if (isLoading) return <div>Loading...</div>
-  if (isError) return <div>Error loading tasks</div>
+  const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null)
+  const [errorTaskId, setErrorTaskId] = useState<string | null>(null)
 
   const handleDelete = async (taskId: string) => {
-    await deleteTask(taskId)
+    setLoadingTaskId(taskId)
+    setErrorTaskId(null)
+    try {
+      await deleteTask({ id: taskId, employeeID: employee._id }).unwrap()
+    } catch (error) {
+      setErrorTaskId(taskId)
+    } finally {
+      setLoadingTaskId(null)
+    }
   }
 
   return (
-    <div>
-      <h2 className="mb-4 text-xl font-bold">Your Tasks</h2>
-      {tasks?.map((task) => (
-        <div key={task.id} className="p-2 mb-2 bg-white border-2 rounded">
-          <h3 className="text-lg">{task.description}</h3>
-          <p>
-            From: {new Date(task.from).toLocaleString()} - To:{" "}
-            {new Date(task.to).toLocaleString()}
-          </p>
-          <button
-            className="px-2 py-1 text-white bg-red-500 rounded hover:bg-red-700"
-            onClick={() => handleDelete(task.id)}
-          >
-            Delete
-          </button>
-        </div>
-      ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {employee &&
+        employee.tasks?.map((task) => (
+          <Card key={task._id} className="mb-2">
+            <CardHeader>
+              <CardTitle> {task.description}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-2">
+                From:{" "}
+                <span className="text-gray-600">
+                  {DateTransform(task.from as string)}
+                </span>
+              </p>
+              <p>
+                To:{" "}
+                <span className="text-gray-600">
+                  {DateTransform(task.to as string)}
+                </span>
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Button
+                className="w-full"
+                onClick={() => handleDelete(task._id)}
+                variant={"destructive"}
+                disabled={isLoading && loadingTaskId === task._id}
+              >
+                {isLoading && loadingTaskId === task._id
+                  ? "Loading..."
+                  : "Delete"}
+              </Button>
+              {isError && errorTaskId === task._id && (
+                <p className="mt-3 text-red-500 text-center text-lg">
+                  Error Deleting task
+                </p>
+              )}
+            </CardFooter>
+          </Card>
+        ))}
     </div>
   )
 }

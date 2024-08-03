@@ -1,9 +1,9 @@
 // src/types.ts
 export interface Task {
-  id: string
+  _id: string
   description: string
-  from: string
-  to: string
+  from: string | Date | null
+  to: string | Date | null
   employee: string
 }
 

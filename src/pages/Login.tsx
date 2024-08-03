@@ -47,9 +47,9 @@ const Login: React.FC = () => {
                 initialValues={{ name: "" }}
                 validationSchema={loginValidationSchema}
                 onSubmit={(values) => {
-                  setName(values.name) // Set the name for the query
-                  setShouldFetch(true) // Trigger fetching
-                  refetch() // Trigger refetch with new name
+                  setName(values.name) 
+                  setShouldFetch(true) 
+                  refetch() 
                 }}
               >
                 <Form>
@@ -92,6 +92,7 @@ const Login: React.FC = () => {
           </Card>
         </div>
       ) : (
+          employee&&
         <Dashboard employee={employee} />
       )}
     </>
