@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "./ui/button"
 import DateTransform from "@/utils/DateTransform"
+import UpdateTask from "./UpdateTask"
 
 const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
   const [deleteTask, { isLoading, isError }] = useDeleteTaskMutation()
@@ -51,16 +52,19 @@ const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
               </p>
             </CardContent>
             <CardFooter>
-              <Button
-                className="w-full"
-                onClick={() => handleDelete(task._id)}
-                variant={"destructive"}
-                disabled={isLoading && loadingTaskId === task._id}
-              >
-                {isLoading && loadingTaskId === task._id
-                  ? "Loading..."
-                  : "Delete"}
-              </Button>
+              <div className="flex items-center w-full justify-center gap-4">
+                <UpdateTask taskId={task._id} />
+                <Button
+                  className="w-full"
+                  onClick={() => handleDelete(task._id)}
+                  variant={"destructive"}
+                  disabled={isLoading && loadingTaskId === task._id}
+                >
+                  {isLoading && loadingTaskId === task._id
+                    ? "Loading..."
+                    : "Delete"}
+                </Button>
+              </div>
               {isError && errorTaskId === task._id && (
                 <p className="mt-3 text-red-500 text-center text-lg">
                   Error Deleting task

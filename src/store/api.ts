@@ -29,11 +29,7 @@ export const api = createApi({
       providesTags: ["Tasks"],
     }),
 
-    getTasksByEmployee: builder.query<Task[], string>({
-      query: (employeeId) => `/employees/${employeeId}/tasks`,
-      providesTags: ["Tasks"],
-    }),
-
+  
     getTask: builder.query<Task, string>({
       query: (id) => `/tasks/${id}`,
       providesTags: ["Tasks"],
@@ -70,7 +66,6 @@ export const api = createApi({
 export const {
   useCreateEmployeeMutation,
   useGetEmployeeQuery,
-  useGetTasksByEmployeeQuery,
   useCreateTaskMutation,
   useGetTaskQuery,
   useUpdateTaskMutation,
