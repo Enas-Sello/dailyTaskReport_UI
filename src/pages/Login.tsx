@@ -25,7 +25,6 @@ const Login: React.FC = () => {
     data: employee,
     isError,
     isLoading,
-    refetch,
   } = useGetEmployeeQuery(name, { skip: !shouldFetch })
 
   useEffect(() => {
@@ -49,7 +48,6 @@ const Login: React.FC = () => {
                 onSubmit={(values) => {
                   setName(values.name) 
                   setShouldFetch(true) 
-                  refetch() 
                 }}
               >
                 <Form>

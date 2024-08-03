@@ -1,8 +1,16 @@
 import React from "react"
 import { useGetDailySummaryQuery } from "../store/api"
-import { DialogClose, DialogTitle } from "@radix-ui/react-dialog"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+  DialogTrigger,
+} from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
-import { DialogDescription, DialogHeader } from "./ui/dialog"
+import { DialogDescription, DialogFooter, DialogHeader } from "./ui/dialog"
+import { Button } from "./ui/button"
 
 const DailySummary: React.FC<{ employeeId: string; date: string }> = ({
   employeeId,
@@ -12,23 +20,33 @@ const DailySummary: React.FC<{ employeeId: string; date: string }> = ({
     employeeId,
     date,
   })
-
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error loading daily summary</div>
 
   return (
-    <div className="flex flex-col gap-4 justify-center items-center">
-      <DialogClose className="flex justify-end w-full">
-        <X className="h-6 w-6" />
-      </DialogClose>
-
-      <DialogDescription>
-        <p>Total Hours: {data?.totalHours}</p>
-      </DialogDescription>
-      <DialogDescription>
-      <p>Remaining Hours: {data?.remainingHours}</p>
-      </DialogDescription>
-    </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant={"outline"}>Daily Summary</Button>
+      </DialogTrigger>
+      <DialogOverlay className="fixed inset-0 bg-black bg-opacity-80" />
+      <DialogContent className="fixed p-6 bg-white rounded-lg shadow-md sm:max-w-[425px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div className="flex flex-col gap-4 justify-center items-center">
+          <DialogClose className="flex justify-end w-full">
+            <X className="h-6 w-6" />
+          </DialogClose>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">
+              Daily Summary
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription></DialogDescription>
+          <DialogFooter>
+            <p>Total Hours: {data?.totalHours}</p>
+            <p>Remaining Hours: {data?.remainingHours}</p>
+          </DialogFooter>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
