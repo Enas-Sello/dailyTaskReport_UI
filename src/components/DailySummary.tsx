@@ -42,10 +42,18 @@ const DailySummary: React.FC<{ employeeId: string; date: string }> = ({
           </DialogHeader>
           <DialogDescription></DialogDescription>
           <DialogFooter>
-            <div className=" flex flex-col gap-3 justify-center items-center font-medium">
-              <p >Total Hours: {formatHours(data?.totalHours as number)}</p>
-              <p>
-                Remaining Hours: {formatHours(data?.remainingHours as number)}
+            <div className="text-gray-800">
+            <p className="mb-2">
+            Total Hours:{" "}
+                <span className="font-medium">
+                  {formatHours(data?.totalHours as number)}
+                </span>
+              </p>
+              <p className="mb-2">
+              Remaining Hours: {" "}
+                <span className="font-medium">
+                  {formatHours(data?.remainingHours as number)}
+                </span>
               </p>
             </div>
           </DialogFooter>

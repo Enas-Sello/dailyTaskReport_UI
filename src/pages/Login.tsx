@@ -1,37 +1,36 @@
-import React, { useEffect, useState } from "react"
-import { useGetEmployeeQuery } from "@/store/api"
-import { useDispatch } from "react-redux"
-import { setEmployee } from "../store/employeeSlice"
-import Dashboard from "@/components/Dashboard"
-import { Link } from "react-router-dom"
-import { Formik, Field, Form, ErrorMessage } from "formik"
+import React, { useEffect, useState } from "react";
+import { useGetEmployeeQuery } from "@/store/api";
+import { useDispatch } from "react-redux";
+import { setEmployee } from "../store/employeeSlice";
+import Dashboard from "@/components/Dashboard";
+import { Link } from "react-router-dom";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { loginValidationSchema } from "@/validation/validationSchema"
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { loginValidationSchema } from "@/validation/validationSchema";
 
 const Login: React.FC = () => {
-  const dispatch = useDispatch()
-  const [name, setName] = useState<string>("")
-  const [shouldFetch, setShouldFetch] = useState(false)
+  const dispatch = useDispatch();
+  const [name, setName] = useState<string>("");
+  const [shouldFetch, setShouldFetch] = useState(false);
 
   const {
     data: employee,
     isError,
     isLoading,
-  } = useGetEmployeeQuery(name, { skip: !shouldFetch })
-
+  } = useGetEmployeeQuery(name, { skip: !shouldFetch });
   useEffect(() => {
     if (employee) {
-      dispatch(setEmployee(employee))
+      dispatch(setEmployee(employee));
     }
-  }, [employee, dispatch])
+  }, [employee, dispatch]);
 
   return (
     <>
@@ -46,8 +45,8 @@ const Login: React.FC = () => {
                 initialValues={{ name: "" }}
                 validationSchema={loginValidationSchema}
                 onSubmit={(values) => {
-                  setName(values.name) 
-                  setShouldFetch(true) 
+                  setName(values.name);
+                  setShouldFetch(true);
                 }}
               >
                 <Form>
@@ -90,11 +89,10 @@ const Login: React.FC = () => {
           </Card>
         </div>
       ) : (
-          employee&&
-        <Dashboard employee={employee} />
+        employee && <Dashboard employee={employee} />
       )}
     </>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
