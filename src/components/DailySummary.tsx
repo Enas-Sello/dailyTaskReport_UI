@@ -1,5 +1,5 @@
-import React from "react"
-import { useGetDailySummaryQuery } from "../store/api"
+import React from "react";
+import { useGetDailySummaryQuery } from "../store/api";
 import {
   Dialog,
   DialogClose,
@@ -7,10 +7,11 @@ import {
   DialogOverlay,
   DialogTitle,
   DialogTrigger,
-} from "@radix-ui/react-dialog"
-import { X } from "lucide-react"
-import { DialogDescription, DialogFooter, DialogHeader } from "./ui/dialog"
-import { Button } from "./ui/button"
+} from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
+import { DialogDescription, DialogFooter, DialogHeader } from "./ui/dialog";
+import { Button } from "./ui/button";
+import { formatHours } from "@/utils/DateTransform";
 
 const DailySummary: React.FC<{ employeeId: string; date: string }> = ({
   employeeId,
@@ -19,9 +20,9 @@ const DailySummary: React.FC<{ employeeId: string; date: string }> = ({
   const { data, error, isLoading } = useGetDailySummaryQuery({
     employeeId,
     date,
-  })
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <div>Error loading daily summary</div>
+  });
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading daily summary</div>;
 
   return (
     <Dialog>
@@ -41,13 +42,17 @@ const DailySummary: React.FC<{ employeeId: string; date: string }> = ({
           </DialogHeader>
           <DialogDescription></DialogDescription>
           <DialogFooter>
-            <p>Total Hours: {data?.totalHours}</p>
-            <p>Remaining Hours: {data?.remainingHours}</p>
+            <div className=" flex flex-col gap-3 justify-center items-center font-medium">
+              <p >Total Hours: {formatHours(data?.totalHours as number)}</p>
+              <p>
+                Remaining Hours: {formatHours(data?.remainingHours as number)}
+              </p>
+            </div>
           </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default DailySummary
+export default DailySummary;

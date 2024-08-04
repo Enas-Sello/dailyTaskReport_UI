@@ -1,5 +1,5 @@
-import { Employee, Task } from "@/types"
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { Employee, PaginatedTasks, Task } from "@/types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const api = createApi({
   reducerPath: "api",
@@ -29,9 +29,11 @@ export const api = createApi({
       providesTags: ["Tasks"],
     }),
 
-  
-    getTask: builder.query<Task, string>({
-      query: (id) => `/tasks/${id}`,
+    getTasks: builder.query<
+      PaginatedTasks,
+      { employeeId: string; page?: number; limit?: number }
+    >({
+      query: ({ employeeId, page = 1, limit = 10 }) => `tasks/${employeeId}?page=${page}&limit=${limit}`,
       providesTags: ["Tasks"],
     }),
 
@@ -61,14 +63,14 @@ export const api = createApi({
       providesTags: ["Tasks"],
     }),
   }),
-})
+});
 
 export const {
   useCreateEmployeeMutation,
   useGetEmployeeQuery,
   useCreateTaskMutation,
-  useGetTaskQuery,
+  useGetTasksQuery,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
   useGetDailySummaryQuery,
-} = api
+} = api;

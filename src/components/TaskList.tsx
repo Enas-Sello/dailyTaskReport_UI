@@ -1,38 +1,48 @@
-import React, { useState } from "react"
-import { useDeleteTaskMutation } from "../store/api"
-import { Employee } from "@/types"
+import React, { useState } from "react";
+import { useDeleteTaskMutation, useGetTasksQuery } from "../store/api";
+import { Employee } from "@/types";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Button } from "./ui/button"
-import DateTransform from "@/utils/DateTransform"
-import UpdateTask from "./UpdateTask"
+} from "@/components/ui/card";
+import { Button } from "./ui/button";
+import DateTransform from "@/utils/DateTransform";
+import UpdateTask from "./UpdateTask";
+import PaginationComponent from "./Pagination";
 
 const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
-  const [deleteTask, { isLoading, isError }] = useDeleteTaskMutation()
-  const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null)
-  const [errorTaskId, setErrorTaskId] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading, isError } = useGetTasksQuery({
+    employeeId: employee._id,
+    page: currentPage,
+    limit: 10,
+  });
+  const [deleteTask] = useDeleteTaskMutation();
+  const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null);
+  const [errorTaskId, setErrorTaskId] = useState<string | null>(null);
 
   const handleDelete = async (taskId: string) => {
-    setLoadingTaskId(taskId)
-    setErrorTaskId(null)
+    setLoadingTaskId(taskId);
+    setErrorTaskId(null);
     try {
-      await deleteTask({ id: taskId, employeeID: employee._id }).unwrap()
+      await deleteTask({ id: taskId, employeeID: employee._id }).unwrap();
     } catch (error) {
-      setErrorTaskId(taskId)
+      setErrorTaskId(taskId);
     } finally {
-      setLoadingTaskId(null)
+      setLoadingTaskId(null);
     }
-  }
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading tasks</div>;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {employee &&
-        employee.tasks?.map((task) => (
+    <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {data?.data.map((task) => (
           <Card key={task._id} className="mb-2">
             <CardHeader>
               <CardTitle> {task.description}</CardTitle>
@@ -58,11 +68,9 @@ const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
                   className="w-full"
                   onClick={() => handleDelete(task._id)}
                   variant={"destructive"}
-                  disabled={isLoading && loadingTaskId === task._id}
+                  disabled={loadingTaskId === task._id}
                 >
-                  {isLoading && loadingTaskId === task._id
-                    ? "Loading..."
-                    : "Delete"}
+                  {loadingTaskId === task._id ? "Loading..." : "Delete"}
                 </Button>
               </div>
               {isError && errorTaskId === task._id && (
@@ -73,8 +81,16 @@ const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
             </CardFooter>
           </Card>
         ))}
+      </div>
+      <div className="flex justify-center mt-4">
+        <PaginationComponent
+          currentPage={currentPage}
+          totalPages={data?.totalPages || 1}
+          onPageChange={setCurrentPage}
+        />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default TaskList
+export default TaskList;
