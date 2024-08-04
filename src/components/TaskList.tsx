@@ -53,7 +53,7 @@ const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
             </CardContent>
             <CardFooter>
               <div className="flex items-center w-full justify-center gap-4">
-                <UpdateTask taskId={task._id} />
+                <UpdateTask task={task} />
                 <Button
                   className="w-full"
                   onClick={() => handleDelete(task._id)}

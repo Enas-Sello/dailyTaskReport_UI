@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { useUpdateTaskMutation, useGetTaskQuery } from "../store/api"
+import React, { useEffect, useState } from "react";
+import { useUpdateTaskMutation } from "../store/api";
 import {
   Dialog,
   DialogClose,
@@ -8,51 +8,58 @@ import {
   DialogOverlay,
   DialogTitle,
   DialogTrigger,
-} from "@radix-ui/react-dialog"
-import { DialogFooter, DialogHeader } from "./ui/dialog"
-import { Formik, Field, Form, ErrorMessage } from "formik"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@radix-ui/react-label"
-import { taskValidationSchema } from "@/validation/validationSchema"
-import { X } from "lucide-react"
-import DatePicker from "react-datepicker"
-import "react-datepicker/dist/react-datepicker.css"
+} from "@radix-ui/react-dialog";
+import { DialogFooter, DialogHeader } from "./ui/dialog";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-label";
+import { taskValidationSchema } from "@/validation/validationSchema";
+import { X } from "lucide-react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Task } from "@/types";
 
-const UpdateTask: React.FC<{ taskId: string }> = ({ taskId }) => {
-  const [updateTask, { isLoading, isError }] = useUpdateTaskMutation()
-  const { data: task, isLoading: isTaskLoading } = useGetTaskQuery(taskId)
+const UpdateTask: React.FC<{ task: Task }> = ({ task }) => {
+  const [updateTask, { isLoading, isError }] = useUpdateTaskMutation();
   const [initialValues, setInitialValues] = useState<{
-    description: string
-    from: Date | null
-    to: Date | null
+    description: string;
+    from: Date | null;
+    to: Date | null;
   }>({
     description: "",
     from: null,
     to: null,
-  })
+  });
 
   useEffect(() => {
     if (task) {
       setInitialValues({
         description: task.description,
-        from: new Date(task.from),
-        to: new Date(task.to),
-      })
+        from: new Date(task.from as string),
+        to: new Date(task.to as string),
+      });
     }
-  }, [task])
+  }, [task]);
 
   const handleSubmit = async (
-    values: { description: string; from: Date | null; to: Date | null },
+    values: {
+      description: string;
+      from: Date | null;
+      to: Date | null;
+    },
     { resetForm }: { resetForm: () => void }
   ) => {
     try {
-      await updateTask({ id: taskId, data: values }).unwrap()
-      resetForm()
+      await updateTask({
+        id: task._id,
+        data: { employee: task.employee, ...values },
+      }).unwrap();
+      resetForm();
     } catch (error) {
-      console.error("Failed to update task:", error)
+      console.error("Failed to update task:", error);
     }
-  }
+  };
 
   return (
     <Dialog>
@@ -83,6 +90,7 @@ const UpdateTask: React.FC<{ taskId: string }> = ({ taskId }) => {
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="description">Description</Label>
                   <Field
+                    value={values.description}
                     as={Input}
                     type="text"
                     name="description"
@@ -97,11 +105,8 @@ const UpdateTask: React.FC<{ taskId: string }> = ({ taskId }) => {
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="from">From:</Label>
                   <DatePicker
-                    placeholderText="Start Date"
-                    selected={values.from || null}
-                    onChange={(date: Date | null) =>
-                      setFieldValue("from", date)
-                    }
+                    selected={values.from}
+                    onChange={(date) => setFieldValue("from", date)}
                     showTimeSelect
                     dateFormat="Pp"
                     className="form-input border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
@@ -115,9 +120,8 @@ const UpdateTask: React.FC<{ taskId: string }> = ({ taskId }) => {
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="to">To:</Label>
                   <DatePicker
-                    placeholderText="End Date"
-                    selected={values.to || null}
-                    onChange={(date: Date | null) => setFieldValue("to", date)}
+                    selected={values.to}
+                    onChange={(date) => setFieldValue("to", date)}
                     showTimeSelect
                     dateFormat="Pp"
                     className="form-input border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
@@ -132,7 +136,7 @@ const UpdateTask: React.FC<{ taskId: string }> = ({ taskId }) => {
                   <Button
                     className="w-full"
                     type="submit"
-                    disabled={isSubmitting || isLoading || isTaskLoading}
+                    disabled={isSubmitting || isLoading}
                   >
                     {isSubmitting || isLoading ? "Updating..." : "Update Task"}
                   </Button>
@@ -148,7 +152,7 @@ const UpdateTask: React.FC<{ taskId: string }> = ({ taskId }) => {
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default UpdateTask
+export default UpdateTask;
