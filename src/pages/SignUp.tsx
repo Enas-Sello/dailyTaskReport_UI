@@ -84,7 +84,7 @@ const SignUp: React.FC = () => {
           </Card>
         </div>
       ) : (
-        <Dashboard employee={employee} />
+        <Dashboard />
       )}
     </>
   )

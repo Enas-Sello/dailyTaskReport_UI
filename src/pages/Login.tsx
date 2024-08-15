@@ -89,7 +89,7 @@ const Login: React.FC = () => {
           </Card>
         </div>
       ) : (
-        employee && <Dashboard employee={employee} />
+        employee && <Dashboard />
       )}
     </>
   );

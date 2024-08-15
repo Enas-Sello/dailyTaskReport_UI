@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useDeleteTaskMutation, useGetTasksQuery } from "../store/api";
-import { Employee } from "@/types";
 import {
   Card,
   CardContent,
@@ -12,11 +11,15 @@ import { Button } from "./ui/button";
 import DateTransform from "@/utils/DateTransform";
 import UpdateTask from "./UpdateTask";
 import PaginationComponent from "./Pagination";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
-const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
+const TaskList: React.FC = () => {
+  const employee = useSelector((state: RootState) => state.employee.employee);
+
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading, isError } = useGetTasksQuery({
-    employeeId: employee._id,
+    employeeId: employee?._id || "",
     page: currentPage,
     limit: 10,
   });
@@ -28,7 +31,10 @@ const TaskList: React.FC<{ employee: Employee }> = ({ employee }) => {
     setLoadingTaskId(taskId);
     setErrorTaskId(null);
     try {
-      await deleteTask({ id: taskId, employeeID: employee._id }).unwrap();
+      await deleteTask({
+        id: taskId,
+        employeeID: employee?._id || "",
+      }).unwrap();
     } catch (error) {
       setErrorTaskId(taskId);
     } finally {
